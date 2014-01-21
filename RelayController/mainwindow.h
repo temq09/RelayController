@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <QMap>
 #include "server.h"
 
 namespace Ui {
@@ -24,9 +25,15 @@ private:
     Ui::MainWindow *ui;
     server _socketToRelayController;
     bool _connectionState;
+    QMap<QString, int> onOfButtonMap;
+
+    void initializeSignalsFromOnOfBtn();
+    void onOfButtonMapInitialize(int countButton);
 
 private slots:
     void slot_connectionToHost();
+    void slot_OnOfbtnClick(QString buttonName);
+
 };
 
 #endif // MAINWINDOW_H

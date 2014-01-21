@@ -3,13 +3,19 @@
 
 #include <QUdpSocket>
 #include <QDebug>
+#include <QVector>
+#include <QIODevice>
+#include <QException>
+#include <QTcpSocket>
 
 class server : public QObject
 {
     Q_OBJECT
 public:
     server();
-    bool connectToHost(QString ipAddress, quint16 port);
+    void connectToHost(QString ipAddress, quint16 port);
+    void changeStateRelay(int relayNumber);  //метод вызывается внешними приложениями
+    int getCountRelay();
 
 public slots:
 
@@ -17,14 +23,25 @@ private:
     bool _connectionState;
     QString _ipAddress;
     quint16 _port;
-    QUdpSocket _clientSocket;
+    QTcpSocket _clientSocket;
     QUdpSocket _serverSocket;
+    int _relayCount;
+    struct RelayControllerState
+    {
+        int numberRelay; // номер реле. Начинается с 1 до 16.
+        bool stateRelay; // состояние. по умолчанию выключенно(false).
+    };
+    QVector<RelayControllerState> arrayOfRelay;
+
+    void initializeRelayCOntrollerState();
+    void controllerStateChange(int onOfCode, int param2, int numberRelay);
 
 private slots:
     void slot_connectionStateChange();
 
 signals:
     void signal_connectionStateChange(bool state);
+    void signal_relayStateChange(bool state, int numRelay);
 
 };
 

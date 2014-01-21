@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    server.cpp
+    server.cpp \
+    modernpushbutton.cpp
 
 HEADERS  += mainwindow.h \
-    server.h
+    server.h \
+    modernpushbutton.h
 
 FORMS    += mainwindow.ui

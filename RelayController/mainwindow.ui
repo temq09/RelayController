@@ -58,6 +58,9 @@
             <height>16777215</height>
            </size>
           </property>
+          <property name="text">
+           <string>192.168.1.22</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -93,6 +96,9 @@
             <width>50</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="text">
+           <string>8080</string>
           </property>
          </widget>
         </item>
@@ -209,7 +215,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn1">
+               <widget class="modernPushButton" name="pb_btn1">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -239,7 +245,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn9">
+               <widget class="modernPushButton" name="pb_btn9">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -269,7 +275,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn2">
+               <widget class="modernPushButton" name="pb_btn2">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -299,7 +305,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn10">
+               <widget class="modernPushButton" name="pb_btn10">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -329,7 +335,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn3">
+               <widget class="modernPushButton" name="pb_btn3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -359,7 +365,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn11">
+               <widget class="modernPushButton" name="pb_btn11">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -389,7 +395,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn4">
+               <widget class="modernPushButton" name="pb_btn4">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -419,7 +425,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn12">
+               <widget class="modernPushButton" name="pb_btn12">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -449,7 +455,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn5">
+               <widget class="modernPushButton" name="pb_btn5">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -479,7 +485,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn13">
+               <widget class="modernPushButton" name="pb_btn13">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -509,7 +515,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn6">
+               <widget class="modernPushButton" name="pb_btn6">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -539,7 +545,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn14">
+               <widget class="modernPushButton" name="pb_btn14">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -569,7 +575,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn7">
+               <widget class="modernPushButton" name="pb_btn7">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -599,7 +605,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn15">
+               <widget class="modernPushButton" name="pb_btn15">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -629,7 +635,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn8">
+               <widget class="modernPushButton" name="pb_btn8">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -659,7 +665,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pb_btn16">
+               <widget class="modernPushButton" name="pb_btn16">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -743,6 +749,13 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>modernPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">modernpushbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
