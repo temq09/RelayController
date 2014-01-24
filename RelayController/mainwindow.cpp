@@ -14,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initializeSignalsFromOnOfBtn();
     connect(&_socketToRelayController, SIGNAL(signal_connectionStateChange(bool)), this, SLOT(slot_connectionStateChange(bool)));
     connect(ui->pb_connect, SIGNAL(clicked()), this, SLOT(slot_connectionToHost()));
-
+    connect(&_socketToRelayController, SIGNAL(signal_relayStateChange(bool,int)), this, SLOT(slot_relayStateChange(bool,int)));
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(slot_testMethod()));
     //other settings
     onOfButtonMapInitialize(_socketToRelayController.getCountRelay());
 }
@@ -92,4 +93,54 @@ void MainWindow::slot_OnOfbtnClick(QString buttonName)
         return;
     }
     _socketToRelayController.changeStateRelay(numberOfButton);
+}
+
+void MainWindow::slot_relayStateChange(bool state, int numberRelay)
+{
+    QString relayOn = "Включенно";
+    QString relayOff = "Выключенно";
+    QString textToLabel;
+    (state) ? textToLabel = relayOn : textToLabel = relayOff;
+
+    switch(numberRelay)
+    {
+    case 1: ui->lb_relay1->setText(textToLabel);
+        break;
+    case 2: ui->lb_relay2->setText(textToLabel);
+        break;
+    case 3 : ui->lb_relay3->setText(textToLabel);
+        break;
+    case 4 : ui->lb_relay4->setText(textToLabel);
+        break;
+    case 5 : ui->lb_relay5->setText(textToLabel);
+        break;
+    case 6 : ui->lb_relay6->setText(textToLabel);
+        break;
+    case 7 : ui->lb_relay7->setText(textToLabel);
+        break;
+    case 8 : ui->lb_relay8->setText(textToLabel);
+        break;
+    case 9 : ui->lb_relay9->setText(textToLabel);
+        break;
+    case 10 : ui->lb_relay10->setText(textToLabel);
+        break;
+    case 11 : ui->lb_relay11->setText(textToLabel);
+        break;
+    case 12 : ui->lb_relay12->setText(textToLabel);
+        break;
+    case 13 : ui->lb_relay13->setText(textToLabel);
+        break;
+    case 14 : ui->lb_relay14->setText(textToLabel);
+        break;
+    case 15 : ui->lb_relay15->setText(textToLabel);
+        break;
+    case 16 : ui->lb_relay16->setText(textToLabel);
+        break;
+    }
+
+}
+
+void MainWindow::slot_testMethod()
+{
+    _socketToRelayController.readNewDataFromClientSocket();
 }

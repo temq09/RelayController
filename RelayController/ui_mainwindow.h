@@ -104,6 +104,7 @@ public:
     modernPushButton *pb_btn16;
     QSpacerItem *horizontalSpacer_2;
     QListView *listView;
+    QPushButton *pushButton;
     QSpacerItem *verticalSpacer;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
@@ -579,6 +580,11 @@ public:
 
         horizontalLayout_3->addWidget(listView);
 
+        pushButton = new QPushButton(centralWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+
+        horizontalLayout_3->addWidget(pushButton);
+
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         horizontalLayout_3->addItem(verticalSpacer);
@@ -648,6 +654,7 @@ public:
         pb_btn8->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\260\321\202\320\265\320\273\321\214", 0));
         lb_relay16->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\265\320\275\320\276", 0));
         pb_btn16->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\260\321\202\320\265\320\273\321\214", 0));
+        pushButton->setText(QApplication::translate("MainWindow", "PushButton", 0));
     } // retranslateUi
 
 };

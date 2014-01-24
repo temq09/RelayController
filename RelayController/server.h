@@ -17,8 +17,9 @@ public:
     void changeStateRelay(int relayNumber);  //метод вызывается внешними приложениями
     int getCountRelay();
 
-public slots:
 
+public slots:
+    void readNewDataFromClientSocket();
 private:
     bool _connectionState;
     QString _ipAddress;
@@ -35,6 +36,8 @@ private:
 
     void initializeRelayCOntrollerState();
     void controllerStateChange(int onOfCode, int param2, int numberRelay);
+    QString byteConverter(QByteArray byteArray);
+
 
 private slots:
     void slot_connectionStateChange();

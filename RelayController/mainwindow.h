@@ -20,6 +20,7 @@ public:
 
 public slots:
     void slot_connectionStateChange(bool state);
+    void slot_relayStateChange(bool state, int numberRelay);
 
 private:
     Ui::MainWindow *ui;
@@ -29,10 +30,12 @@ private:
 
     void initializeSignalsFromOnOfBtn();
     void onOfButtonMapInitialize(int countButton);
+    void changeLabelState(int numberLabel, QString message);
 
 private slots:
     void slot_connectionToHost();
     void slot_OnOfbtnClick(QString buttonName);
+    void slot_testMethod();
 
 };
 
