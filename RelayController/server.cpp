@@ -10,7 +10,7 @@ server::server()
     //signal and slots setting
     connect(&_clientSocket, SIGNAL(connected()) , this, SLOT(slot_connectionStateChange()));
     connect(&_clientSocket, SIGNAL(readyRead()), this, SLOT(readNewDataFromClientSocket()));
-
+    connect(this, SIGNAL(signal_handleFrame(QString)), this, SLOT(slot_handleFrame(QString)));
 }
 
 void server::initializeRelayCOntrollerState()
@@ -37,6 +37,7 @@ void server::connectToHost(QString ipAddress, quint16 port)
 void server::slot_connectionStateChange()
 {
     _connectionState = true;
+    getRelayStateFromCOntroller();
     emit signal_connectionStateChange(_connectionState);
 }
 
@@ -67,12 +68,13 @@ void server::changeStateRelay(int relayNumber)
     }
 
     controllerStateChange(OnOfCode, param2, arrayOfRelay[relayNumber-1].numberRelay);
+    getRelayStateFromCOntroller();
 }
 
 void server::controllerStateChange(int onOfCode, int param2, int numberRelay)
 {
     qDebug()<<"ФОрмируем массив для отправки";
-    if(_clientSocket.isOpen())
+    if(_clientSocket.state() == QAbstractSocket::ConnectedState)
     {
         int i = numberRelay + param2 + onOfCode + 85 + 1;
         QByteArray byteArray;
@@ -91,17 +93,14 @@ void server::controllerStateChange(int onOfCode, int param2, int numberRelay)
             _clientSocket.write(byteArray);
             _clientSocket.flush();
             qDebug() << "Данные отправлены";
-            if(onOfCode != 16)
-            {
-                (onOfCode == 18) ? arrayOfRelay[numberRelay-1].stateRelay  = true : arrayOfRelay[numberRelay-1].stateRelay = false;
-                emit signal_relayStateChange(arrayOfRelay[numberRelay-1].stateRelay, arrayOfRelay[numberRelay-1].numberRelay);
-            }
         }
         catch(QException ex)
         {
             qDebug() << "Ошибка при передаче данных";
         }
     }
+    else
+        qDebug() << "Соединение не открыто";
 }
 
 int server::getCountRelay()
@@ -109,28 +108,51 @@ int server::getCountRelay()
     return _relayCount;
 }
 
-void server::readNewDataFromClientSocket()
+
+/*
+ *Этот метод вызывается при инициализации программы,
+ *а также после отправке данных о изменении состояния реле
+ *для того, чтобы определить включенные и выключенные реле.
+ */
+void server::getRelayStateFromCOntroller()
 {
-    if(_clientSocket.isOpen())
+    if(_clientSocket.state() == QAbstractSocket::ConnectedState)
     {
         this->controllerStateChange(16,0,0);
-        try
-        {
-            QByteArray newData;
-            newData.resize(8);
-            if(_clientSocket.bytesAvailable() > 8)
-                qDebug() << "Мало данных";
-            newData = _clientSocket.readAll();
-            QString str = byteConverter(newData);
-            qDebug() << str;
-            qDebug() << "Информация считана";
-            this->controllerStateChange(16,0,0);
-        }
-        catch(QException ex)
-        {
-            qDebug() << "Ошибка при чтении информации";
-        }
+    }
+}
 
+/*
+ * Данный слот вызывается при получении новых данных от сервера.
+ * После получения, данные анализируются и отправляются клиентам.
+ */
+
+void server::readNewDataFromClientSocket()
+{
+    try
+    {
+        QByteArray newData;
+        newData.resize(8);
+        if(_clientSocket.bytesAvailable() > 8)
+            qDebug() << "Мало данных";
+        newData = _clientSocket.readAll();
+        qDebug() << "Информация считана";
+        QString frameFromController = byteConverter(newData);
+        qDebug() <<"Конвертированные данные" << frameFromController;       
+        if(frameFromController.startsWith("22") && frameFromController.length() == 16)
+        {
+            qDebug() << "Формат кадра правильный. Начинаем обработку данных";
+            QString partFrame = frameFromController.right(6);
+            partFrame = partFrame.left(4);
+            QString binary = QString::number(partFrame.toInt(0,16), 2);
+            qDebug() << partFrame << ";" << binary;
+            QString reverseFrameStr =  reverseFrame(binary);          
+            emit signal_handleFrame(reverseFrameStr);
+        }
+    }
+    catch(QException ex)
+    {
+        qDebug() << "Ошибка при чтении информации";
     }
 }
 
@@ -169,4 +191,33 @@ QString server::byteConverter(QByteArray byteArray)
         arrayOfChar[m] = hexArray[(k&0xF)];
     }
     return QString(arrayOfChar);
+}
+
+
+//инвертируем кадр т.к. индекс символа = порядковому номеру реле
+QString server::reverseFrame(QString binaryString)
+{
+    QString str = binaryString;
+    while(str.length() < _relayCount)
+        str.insert(0, "0");
+    QString reverseStr;
+    for(int i = 0, j = str.length() - 1; j >= 0; j--, i++)
+    {
+        reverseStr.append(str.at(j));
+    }
+    qDebug() << str << "\n" << reverseStr;
+    return reverseStr;
+}
+
+void server::slot_handleFrame(QString str)
+{
+    qDebug() << "rrr";
+    for(int i = 0; i < str.length(); i++)
+    {
+        (str.at(i) == "0") ? arrayOfRelay[i].stateRelay = false : arrayOfRelay[i].stateRelay = true;
+    }
+    //сюда добавить метод который отправляет данные всем клиентам которые на них подписанны
+
+    //на этот сигнал подписанно главное окно приложения. Высылается строка с состоянием всех реле.
+    emit signal_sendFrameToMainWindow(str);
 }

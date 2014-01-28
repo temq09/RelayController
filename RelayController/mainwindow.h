@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QDebug>
 #include <QMap>
+#include <QLabel>
 #include "server.h"
 
 namespace Ui {
@@ -20,15 +21,17 @@ public:
 
 public slots:
     void slot_connectionStateChange(bool state);
-    void slot_relayStateChange(bool state, int numberRelay);
+    void slot_relayStateChange(QString str);
 
 private:
     Ui::MainWindow *ui;
     server _socketToRelayController;
     bool _connectionState;
     QMap<QString, int> onOfButtonMap;
+    QVector<QLabel*> arrayOfLabel;
 
     void initializeSignalsFromOnOfBtn();
+    void initializeArrayOfLabel();
     void onOfButtonMapInitialize(int countButton);
     void changeLabelState(int numberLabel, QString message);
 
