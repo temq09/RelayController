@@ -11,13 +11,14 @@ MainWindow::MainWindow(QWidget *parent) :
     _connectionState = false;
 
     //signal and slots setting
-    initializeSignalsFromOnOfBtn();
+    initializeSignalsFromOnOfBtn();  
     connect(&_socketToRelayController, SIGNAL(signal_connectionStateChange(bool)), this, SLOT(slot_connectionStateChange(bool)));
     connect(ui->pb_connect, SIGNAL(clicked()), this, SLOT(slot_connectionToHost()));
-    connect(&_socketToRelayController, SIGNAL(signal_relayStateChange(bool,int)), this, SLOT(slot_relayStateChange(bool,int)));
+    connect(&_socketToRelayController, SIGNAL(signal_sendFrameToMainWindow(QString)), this, SLOT(slot_relayStateChange(QString)));
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(slot_testMethod()));
     //other settings
     onOfButtonMapInitialize(_socketToRelayController.getCountRelay());
+    initializeArrayOfLabel();
 }
 
 MainWindow::~MainWindow()
@@ -25,6 +26,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+//заполняет QMap именами кнопок и номером который соответсвует порядковому номеру кнопки.
 void MainWindow::onOfButtonMapInitialize(int countButton)
 {
     for (int i =0; i <countButton; i++)
@@ -51,6 +54,26 @@ void MainWindow::initializeSignalsFromOnOfBtn()
     connect(ui->pb_btn14, SIGNAL(clickByButton(QString)), this, SLOT(slot_OnOfbtnClick(QString)));
     connect(ui->pb_btn15, SIGNAL(clickByButton(QString)), this, SLOT(slot_OnOfbtnClick(QString)));
     connect(ui->pb_btn16, SIGNAL(clickByButton(QString)), this, SLOT(slot_OnOfbtnClick(QString)));
+}
+
+void MainWindow::initializeArrayOfLabel()
+{
+    arrayOfLabel.append(ui->lb_relay1);
+    arrayOfLabel.append(ui->lb_relay2);
+    arrayOfLabel.append(ui->lb_relay3);
+    arrayOfLabel.append(ui->lb_relay4);
+    arrayOfLabel.append(ui->lb_relay5);
+    arrayOfLabel.append(ui->lb_relay6);
+    arrayOfLabel.append(ui->lb_relay7);
+    arrayOfLabel.append(ui->lb_relay8);
+    arrayOfLabel.append(ui->lb_relay9);
+    arrayOfLabel.append(ui->lb_relay10);
+    arrayOfLabel.append(ui->lb_relay11);
+    arrayOfLabel.append(ui->lb_relay12);
+    arrayOfLabel.append(ui->lb_relay13);
+    arrayOfLabel.append(ui->lb_relay14);
+    arrayOfLabel.append(ui->lb_relay15);
+    arrayOfLabel.append(ui->lb_relay16);
 }
 
 void MainWindow::slot_connectionToHost()
@@ -81,6 +104,7 @@ void MainWindow::slot_connectionStateChange(bool state)
     }
 }
 
+//вызывается при нажатии кнопки для включения/выключения реле.
 void MainWindow::slot_OnOfbtnClick(QString buttonName)
 {
     int numberOfButton = -1;
@@ -95,49 +119,18 @@ void MainWindow::slot_OnOfbtnClick(QString buttonName)
     _socketToRelayController.changeStateRelay(numberOfButton);
 }
 
-void MainWindow::slot_relayStateChange(bool state, int numberRelay)
+void MainWindow::slot_relayStateChange(QString str)
 {
     QString relayOn = "Включенно";
     QString relayOff = "Выключенно";
-    QString textToLabel;
-    (state) ? textToLabel = relayOn : textToLabel = relayOff;
 
-    switch(numberRelay)
+    for(int i = 0; i < str.length(); i++)
     {
-    case 1: ui->lb_relay1->setText(textToLabel);
-        break;
-    case 2: ui->lb_relay2->setText(textToLabel);
-        break;
-    case 3 : ui->lb_relay3->setText(textToLabel);
-        break;
-    case 4 : ui->lb_relay4->setText(textToLabel);
-        break;
-    case 5 : ui->lb_relay5->setText(textToLabel);
-        break;
-    case 6 : ui->lb_relay6->setText(textToLabel);
-        break;
-    case 7 : ui->lb_relay7->setText(textToLabel);
-        break;
-    case 8 : ui->lb_relay8->setText(textToLabel);
-        break;
-    case 9 : ui->lb_relay9->setText(textToLabel);
-        break;
-    case 10 : ui->lb_relay10->setText(textToLabel);
-        break;
-    case 11 : ui->lb_relay11->setText(textToLabel);
-        break;
-    case 12 : ui->lb_relay12->setText(textToLabel);
-        break;
-    case 13 : ui->lb_relay13->setText(textToLabel);
-        break;
-    case 14 : ui->lb_relay14->setText(textToLabel);
-        break;
-    case 15 : ui->lb_relay15->setText(textToLabel);
-        break;
-    case 16 : ui->lb_relay16->setText(textToLabel);
-        break;
+        if(str.at(i) == "0")
+            arrayOfLabel[i]->setText(relayOff);
+        else
+            arrayOfLabel[i]->setText(relayOn);
     }
-
 }
 
 void MainWindow::slot_testMethod()

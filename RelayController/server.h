@@ -36,15 +36,20 @@ private:
 
     void initializeRelayCOntrollerState();
     void controllerStateChange(int onOfCode, int param2, int numberRelay);
+    void getRelayStateFromCOntroller();
     QString byteConverter(QByteArray byteArray);
+    QString reverseFrame(QString binaryString);
 
 
 private slots:
     void slot_connectionStateChange();
+    void slot_handleFrame(QString str);
 
 signals:
     void signal_connectionStateChange(bool state);
-    void signal_relayStateChange(bool state, int numRelay);
+    //void signal_relayStateChange(bool state, int numRelay);
+    void signal_handleFrame(QString str);
+    void signal_sendFrameToMainWindow(QString strToSend);
 
 };
 
