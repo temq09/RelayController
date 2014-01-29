@@ -5,7 +5,8 @@ server::server()
     //variable setting
     _connectionState = false;
     _relayCount = 16;
-    initializeRelayCOntrollerState();
+    _serverSocket = new QTcpServer(this);
+    initializeRelayControllerState();
 
     //signal and slots setting
     connect(&_clientSocket, SIGNAL(connected()) , this, SLOT(slot_connectionStateChange()));
@@ -13,7 +14,7 @@ server::server()
     connect(this, SIGNAL(signal_handleFrame(QString)), this, SLOT(slot_handleFrame(QString)));
 }
 
-void server::initializeRelayCOntrollerState()
+void server::initializeRelayControllerState()
 {
     for(int i = 0; i<_relayCount; i++)
     {
@@ -37,7 +38,7 @@ void server::connectToHost(QString ipAddress, quint16 port)
 void server::slot_connectionStateChange()
 {
     _connectionState = true;
-    getRelayStateFromCOntroller();
+    getRelayStateFromController();
     emit signal_connectionStateChange(_connectionState);
 }
 
@@ -48,7 +49,7 @@ void server::changeStateRelay(int relayNumber)
      * и отправляем соответствующий код для выключения или включения реле соответствующего номеру кнопки.
      * 17 - код выключения реле
      * 18 - код включения реле
-     * 16 - код, после получения которого контроллер начинает отсылать пакеты данных.
+     * 16 - код, после получения которого контроллер отсылает пакет данных.
      */
 
     qDebug()<<"Определяем включенно или выключенно реле";
@@ -68,7 +69,7 @@ void server::changeStateRelay(int relayNumber)
     }
 
     controllerStateChange(OnOfCode, param2, arrayOfRelay[relayNumber-1].numberRelay);
-    getRelayStateFromCOntroller();
+    getRelayStateFromController();
 }
 
 void server::controllerStateChange(int onOfCode, int param2, int numberRelay)
@@ -114,7 +115,7 @@ int server::getCountRelay()
  *а также после отправке данных о изменении состояния реле
  *для того, чтобы определить включенные и выключенные реле.
  */
-void server::getRelayStateFromCOntroller()
+void server::getRelayStateFromController()
 {
     if(_clientSocket.state() == QAbstractSocket::ConnectedState)
     {
@@ -126,7 +127,6 @@ void server::getRelayStateFromCOntroller()
  * Данный слот вызывается при получении новых данных от сервера.
  * После получения, данные анализируются и отправляются клиентам.
  */
-
 void server::readNewDataFromClientSocket()
 {
     try
@@ -221,3 +221,127 @@ void server::slot_handleFrame(QString str)
     //на этот сигнал подписанно главное окно приложения. Высылается строка с состоянием всех реле.
     emit signal_sendFrameToMainWindow(str);
 }
+
+
+//инвертируем кадр т.к. индекс символа = порядковому номеру реле
+QString server::reverseFrame(QString binaryString)
+{
+    QString str = binaryString;
+    while(str.length() < _relayCount)
+        str.insert(0, "0");
+    QString reverseStr;
+    for(int i = 0, j = str.length() - 1; j >= 0; j--, i++)
+    {
+        reverseStr.append(str.at(j));
+    }
+    qDebug() << str << "\n" << reverseStr;
+    return reverseStr;
+}
+
+void server::slot_handleFrame(QString str)
+{
+    qDebug() << "rrr";
+    for(int i = 0; i < str.length(); i++)
+    {
+        (str.at(i) == "0") ? arrayOfRelay[i].stateRelay = false : arrayOfRelay[i].stateRelay = true;
+    }
+    //отправляем пакет с информацией о состоянии реле всем клиентам.
+    QByteArray dataToSend(str.toLatin1());
+    foreach (int clientDescriptor, _listOfClient.keys())
+    {
+        _listOfClient.value(clientDescriptor)->write(dataToSend);
+        _listOfClient.value(clientDescriptor)->flush();
+    }
+    //на этот сигнал подписанно главное окно приложения. Высылается строка с состоянием всех реле.
+    emit signal_sendFrameToMainWindow(str);
+}
+
+void server::startMyServer(int port)
+{
+    if(!_serverSocket->listen(QHostAddress::Any, port))
+    {
+        qDebug() << "Server not started";
+        _serverSocket->close();
+        return;
+    }
+    else
+        qDebug() << "Сервер запущен успешно";
+
+    connect(_serverSocket, SIGNAL(newConnection()), this, SLOT(slot_newConnection()));
+}
+
+void server::slot_newConnection()
+{
+    while(_serverSocket->hasPendingConnections())
+    {
+        QTcpSocket* clientSocket = _serverSocket->nextPendingConnection();
+        int clientDescriptor = _serverSocket->socketDescriptor();
+        _listOfClient.insert(clientDescriptor, clientSocket);
+        emit signal_sendClientIpAddress( clientSocket->localAddress().toString());
+        connect(clientSocket, SIGNAL(readyRead()), this, SLOT(slot_readNewData()));
+        connect(clientSocket, SIGNAL(disconnected()), this, SLOT(slot_clientDisconnect()));
+    }
+    getRelayStateFromController();
+}
+
+//получаем данные от подключенных к приложению клиентов
+void server::slot_readNewData()
+{
+    QByteArray dataFromClient;
+    QTcpSocket *client = (QTcpSocket*) sender();
+    dataFromClient = client->readAll();
+    qDebug() << "Данные получены";
+    QString str(dataFromClient);
+    qDebug() << str;
+    parseDataFromClients(str);
+}
+
+//обрабатываем полученные данные
+void server::parseDataFromClients(QString dataFromClient)
+{
+    if(dataFromClient.startsWith("22"))
+    {
+        qDebug() << "Формат кадра правильный. Начинаем обработку";
+        int relayNumber = dataFromClient.right(2).toInt();
+        if(relayNumber <= 0)
+        {
+            qDebug() << "Неправильный номер реле.";
+            return;
+        }
+        changeStateRelay(relayNumber);
+    }
+}
+
+//вызывается при отключение клиента от программы
+void server::slot_clientDisconnect()
+{
+    QTcpSocket *clientSocket = (QTcpSocket*)sender();
+    qDebug() << "Клиент с ip адресом - " << clientSocket->localAddress().toString() << " отключился";
+    if ( 0 < _listOfClient.remove(clientSocket->socketDescriptor()))
+    {
+        qDebug() << "Клиент с ip адресом " << clientSocket->localAddress().toString() << " удален из списка подписчиков";
+    }
+}
+
+void server::slot_stopServer()
+{
+    if(_serverSocket->isListening())
+    {
+        qDebug() << "Отключаем всех клиентов";
+        slot_removeAllClient();
+
+        qDebug() << "Останавливаем сервер";
+        _serverSocket->close();
+    }
+}
+
+//вызывается при отсановке сервера для удаления всех подключенных сокетов.
+void server::slot_removeAllClient()
+{
+    foreach (int socketDescriptor, _listOfClient.keys())
+    {
+        _listOfClient.value(socketDescriptor)->close();
+    }
+}
+
+

@@ -44,3 +44,7 @@ Makefile
 *.Debug
 test_file.txt.orig
 *.autosave
+RelayController/html/*
+RelayController/latex/*
+build*/*
+RelayController/*.orig
