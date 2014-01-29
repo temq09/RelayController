@@ -19,11 +19,10 @@ public:
     void changeStateRelay(int relayNumber);  //метод вызывается внешними приложениями
     int getCountRelay();
     void startMyServer(int port);
-    void stopServer();
 
 public slots:
     void readNewDataFromClientSocket();
-
+    void slot_stopServer();
 
 private:
     bool _connectionState;
@@ -41,9 +40,9 @@ private:
     QVector<RelayControllerState> arrayOfRelay;
 
     void parseDataFromClients(QString dataFromClient);
-    void initializeRelayCOntrollerState();
+    void initializeRelayControllerState();
     void controllerStateChange(int onOfCode, int param2, int numberRelay);
-    void getRelayStateFromCOntroller();
+    void getRelayStateFromController();
     QString byteConverter(QByteArray byteArray);
     QString reverseFrame(QString binaryString);
 

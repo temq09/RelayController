@@ -50,7 +50,7 @@ public:
     QLabel *label;
     QLabel *lb_state;
     QPushButton *pb_startServer;
-    QPushButton *pb_removeAll;
+    QPushButton *pb_stopServer;
     QSpacerItem *horizontalSpacer;
     QHBoxLayout *horizontalLayout_2;
     QHBoxLayout *horizontalLayout_3;
@@ -219,10 +219,10 @@ public:
 
         horizontalLayout->addWidget(pb_startServer);
 
-        pb_removeAll = new QPushButton(centralWidget);
-        pb_removeAll->setObjectName(QStringLiteral("pb_removeAll"));
+        pb_stopServer = new QPushButton(centralWidget);
+        pb_stopServer->setObjectName(QStringLiteral("pb_stopServer"));
 
-        horizontalLayout->addWidget(pb_removeAll);
+        horizontalLayout->addWidget(pb_stopServer);
 
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -629,7 +629,7 @@ public:
         label->setText(QApplication::translate("MainWindow", "\320\241\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265", 0));
         lb_state->setText(QApplication::translate("MainWindow", "\320\235\320\225 \320\277\320\276\320\264\320\272\320\273\321\216\321\207\320\265\320\275\320\275\320\276", 0));
         pb_startServer->setText(QApplication::translate("MainWindow", "Start server", 0));
-        pb_removeAll->setText(QApplication::translate("MainWindow", "remove All", 0));
+        pb_stopServer->setText(QApplication::translate("MainWindow", "Stop server", 0));
         lb_relay1->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\265\320\275\320\276", 0));
         pb_btn1->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\260\321\202\320\265\320\273\321\214", 0));
         lb_relay9->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\265\320\275\320\276", 0));
