@@ -7,6 +7,8 @@
 #include <QIODevice>
 #include <QException>
 #include <QTcpSocket>
+#include <QTcpServer>
+#include <QHash>
 
 class server : public QObject
 {
@@ -16,17 +18,21 @@ public:
     void connectToHost(QString ipAddress, quint16 port);
     void changeStateRelay(int relayNumber);  //метод вызывается внешними приложениями
     int getCountRelay();
-
+    void startMyServer(int port);
+    void stopServer();
 
 public slots:
     void readNewDataFromClientSocket();
+
+
 private:
     bool _connectionState;
     QString _ipAddress;
     quint16 _port;
     QTcpSocket _clientSocket;
-    QUdpSocket _serverSocket;
+    QTcpServer* _serverSocket;
     int _relayCount;
+    QHash<int, QTcpSocket*> _listOfClient;
     struct RelayControllerState
     {
         int numberRelay; // номер реле. Начинается с 1 до 16.
@@ -34,6 +40,7 @@ private:
     };
     QVector<RelayControllerState> arrayOfRelay;
 
+    void parseDataFromClients(QString dataFromClient);
     void initializeRelayCOntrollerState();
     void controllerStateChange(int onOfCode, int param2, int numberRelay);
     void getRelayStateFromCOntroller();
@@ -41,15 +48,21 @@ private:
     QString reverseFrame(QString binaryString);
 
 
+
 private slots:
     void slot_connectionStateChange();
     void slot_handleFrame(QString str);
+    void slot_newConnection();
+    void slot_readNewData();
+    void slot_clientDisconnect();
+    void slot_removeAllClient();
 
 signals:
     void signal_connectionStateChange(bool state);
     //void signal_relayStateChange(bool state, int numRelay);
     void signal_handleFrame(QString str);
     void signal_sendFrameToMainWindow(QString strToSend);
+    void signal_sendClientIpAddress(QString ipAddress);
 
 };
 

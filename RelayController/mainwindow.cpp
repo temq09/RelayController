@@ -15,7 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&_socketToRelayController, SIGNAL(signal_connectionStateChange(bool)), this, SLOT(slot_connectionStateChange(bool)));
     connect(ui->pb_connect, SIGNAL(clicked()), this, SLOT(slot_connectionToHost()));
     connect(&_socketToRelayController, SIGNAL(signal_sendFrameToMainWindow(QString)), this, SLOT(slot_relayStateChange(QString)));
-    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(slot_testMethod()));
+    connect(ui->pb_startServer, SIGNAL(clicked()), this, SLOT(slot_startServer()));
+    connect(&_socketToRelayController, SIGNAL(), this, SLOT(slot_addClientIpAddress(QString)));
+    connect(ui->pb_removeAll, SIGNAL(clicked()), &_socketToRelayController, SLOT(slot_removeAllClient()));
     //other settings
     onOfButtonMapInitialize(_socketToRelayController.getCountRelay());
     initializeArrayOfLabel();
@@ -133,7 +135,12 @@ void MainWindow::slot_relayStateChange(QString str)
     }
 }
 
-void MainWindow::slot_testMethod()
+void MainWindow::slot_startServer()
 {
-    _socketToRelayController.readNewDataFromClientSocket();
+    _socketToRelayController.startMyServer(2209);
+}
+
+void MainWindow::slot_addClientIpAddress(QString ipAddress)
+{
+    qDebug() << ipAddress;
 }

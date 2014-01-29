@@ -22,6 +22,7 @@ public:
 public slots:
     void slot_connectionStateChange(bool state);
     void slot_relayStateChange(QString str);
+    void slot_addClientIpAddress(QString ipAddress);
 
 private:
     Ui::MainWindow *ui;
@@ -38,7 +39,7 @@ private:
 private slots:
     void slot_connectionToHost();
     void slot_OnOfbtnClick(QString buttonName);
-    void slot_testMethod();
+    void slot_startServer();
 
 };
 

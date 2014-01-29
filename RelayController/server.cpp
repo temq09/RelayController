@@ -5,6 +5,7 @@ server::server()
     //variable setting
     _connectionState = false;
     _relayCount = 16;
+    _serverSocket = new QTcpServer(this);
     initializeRelayCOntrollerState();
 
     //signal and slots setting
@@ -221,3 +222,81 @@ void server::slot_handleFrame(QString str)
     //на этот сигнал подписанно главное окно приложения. Высылается строка с состоянием всех реле.
     emit signal_sendFrameToMainWindow(str);
 }
+
+void server::startMyServer(int port)
+{
+    if(!_serverSocket->listen(QHostAddress::Any, port))
+    {
+        qDebug() << "Server not started";
+        _serverSocket->close();
+        return;
+    }
+    else
+        qDebug() << "Сервер запущен успешно";
+
+    connect(_serverSocket, SIGNAL(newConnection()), this, SLOT(slot_newConnection()));
+}
+
+void server::slot_newConnection()
+{
+    while(_serverSocket->hasPendingConnections())
+    {
+        QTcpSocket* clientSocket = _serverSocket->nextPendingConnection();
+        int clientDescriptor = _serverSocket->socketDescriptor();
+        _listOfClient.insert(clientDescriptor, clientSocket);
+        emit signal_sendClientIpAddress( clientSocket->localAddress().toString());
+        connect(clientSocket, SIGNAL(readyRead()), this, SLOT(slot_readNewData()));
+        connect(clientSocket, SIGNAL(disconnected()), this, SLOT(slot_clientDisconnect()));
+    }
+}
+
+void server::slot_readNewData()
+{
+    QByteArray dataFromClient;
+    QTcpSocket *client = (QTcpSocket*) sender();
+    dataFromClient = client->readAll();
+    qDebug() << "Данные получены";
+    QString str(dataFromClient);
+    qDebug() << str;
+    parseDataFromClients(str);
+}
+
+void server::parseDataFromClients(QString dataFromClient)
+{
+    if(dataFromClient.startsWith("22"))
+    {
+        qDebug() << "Формат кадра правильный. Начинаем обработку";
+        int relayNumber = dataFromClient.right(2).toInt();
+        if(relayNumber <= 0)
+        {
+            qDebug() << "Неправильный номер реле.";
+            return;
+        }
+        changeStateRelay(relayNumber);
+    }
+}
+
+void server::slot_clientDisconnect()
+{
+    QTcpSocket *clientSocket = (QTcpSocket*)sender();
+    qDebug() << "Клиент с ip адресом - " << clientSocket->localAddress().toString() << " отключился";
+    if ( 0 < _listOfClient.remove(clientSocket->socketDescriptor()))
+    {
+        qDebug() << "Клиент с ip адресом " << clientSocket->localAddress().toString() << " удален из списка подписчиков";
+    }
+}
+
+void server::stopServer()
+{
+    //_serverSocket->
+}
+
+void server::slot_removeAllClient()
+{
+    foreach (int socketDescriptor, _listOfClient.keys())
+    {
+        _listOfClient.value(socketDescriptor)->close();
+    }
+}
+
+

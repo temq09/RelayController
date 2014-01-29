@@ -162,6 +162,20 @@
        </layout>
       </item>
       <item>
+       <widget class="QPushButton" name="pb_startServer">
+        <property name="text">
+         <string>Start server</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_removeAll">
+        <property name="text">
+         <string>remove All</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -700,19 +714,12 @@
          </layout>
         </item>
         <item>
-         <widget class="QListView" name="listView">
+         <widget class="QListView" name="lv_clientIpAddress">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton">
-          <property name="text">
-           <string>PushButton</string>
           </property>
          </widget>
         </item>

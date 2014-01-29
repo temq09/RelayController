@@ -49,6 +49,8 @@ public:
     QVBoxLayout *verticalLayout_5;
     QLabel *label;
     QLabel *lb_state;
+    QPushButton *pb_startServer;
+    QPushButton *pb_removeAll;
     QSpacerItem *horizontalSpacer;
     QHBoxLayout *horizontalLayout_2;
     QHBoxLayout *horizontalLayout_3;
@@ -103,8 +105,7 @@ public:
     QLabel *lb_relay16;
     modernPushButton *pb_btn16;
     QSpacerItem *horizontalSpacer_2;
-    QListView *listView;
-    QPushButton *pushButton;
+    QListView *lv_clientIpAddress;
     QSpacerItem *verticalSpacer;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
@@ -212,6 +213,16 @@ public:
 
 
         horizontalLayout->addLayout(verticalLayout_5);
+
+        pb_startServer = new QPushButton(centralWidget);
+        pb_startServer->setObjectName(QStringLiteral("pb_startServer"));
+
+        horizontalLayout->addWidget(pb_startServer);
+
+        pb_removeAll = new QPushButton(centralWidget);
+        pb_removeAll->setObjectName(QStringLiteral("pb_removeAll"));
+
+        horizontalLayout->addWidget(pb_removeAll);
 
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -570,20 +581,15 @@ public:
 
         horizontalLayout_3->addLayout(verticalLayout_6);
 
-        listView = new QListView(centralWidget);
-        listView->setObjectName(QStringLiteral("listView"));
+        lv_clientIpAddress = new QListView(centralWidget);
+        lv_clientIpAddress->setObjectName(QStringLiteral("lv_clientIpAddress"));
         QSizePolicy sizePolicy4(QSizePolicy::Preferred, QSizePolicy::Expanding);
         sizePolicy4.setHorizontalStretch(0);
         sizePolicy4.setVerticalStretch(0);
-        sizePolicy4.setHeightForWidth(listView->sizePolicy().hasHeightForWidth());
-        listView->setSizePolicy(sizePolicy4);
+        sizePolicy4.setHeightForWidth(lv_clientIpAddress->sizePolicy().hasHeightForWidth());
+        lv_clientIpAddress->setSizePolicy(sizePolicy4);
 
-        horizontalLayout_3->addWidget(listView);
-
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-
-        horizontalLayout_3->addWidget(pushButton);
+        horizontalLayout_3->addWidget(lv_clientIpAddress);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -622,6 +628,8 @@ public:
         pb_connect->setText(QApplication::translate("MainWindow", "\320\237\320\276\320\264\320\272\320\273\321\216\321\207\320\270\321\202\321\214\321\201\321\217", 0));
         label->setText(QApplication::translate("MainWindow", "\320\241\320\276\321\201\321\202\320\276\321\217\320\275\320\270\320\265", 0));
         lb_state->setText(QApplication::translate("MainWindow", "\320\235\320\225 \320\277\320\276\320\264\320\272\320\273\321\216\321\207\320\265\320\275\320\275\320\276", 0));
+        pb_startServer->setText(QApplication::translate("MainWindow", "Start server", 0));
+        pb_removeAll->setText(QApplication::translate("MainWindow", "remove All", 0));
         lb_relay1->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\265\320\275\320\276", 0));
         pb_btn1->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\260\321\202\320\265\320\273\321\214", 0));
         lb_relay9->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\265\320\275\320\276", 0));
@@ -654,7 +662,6 @@ public:
         pb_btn8->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\260\321\202\320\265\320\273\321\214", 0));
         lb_relay16->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\265\320\275\320\276", 0));
         pb_btn16->setText(QApplication::translate("MainWindow", "\320\222\321\213\320\272\320\273\321\216\321\207\320\260\321\202\320\265\320\273\321\214", 0));
-        pushButton->setText(QApplication::translate("MainWindow", "PushButton", 0));
     } // retranslateUi
 
 };
